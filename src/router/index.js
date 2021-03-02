@@ -1,7 +1,5 @@
-import { ENV_NAME } from '@/env'
-import { Url } from '@/utils'
+import { Url } from '../instanceTools/node_modules/@/utils'
 import { isPlainObject } from 'lodash'
-import store from '@/store/index'
 
 const whiteListRoute = []
 
@@ -13,42 +11,55 @@ const whiteListRoute = []
  *  @property switchTab(string | object) => void
  *  @property relaunch(string | object) => void
  */
-export class Router {
+export default class Router {
   constructor(options) {
-    if (isPlainObject(options)) {
-      this.alias = options.alias || {}
+    const _options = {
+      devMode: false,
+      getLoginStatus: () => true,
+      alias: {},
+      whiteListRoute: [],
+      loginPagePath: '',
+      homePagePath: ''
     }
-  }
-  @transformConfig
-  push(config) {
-    uni.navigateTo(config)
-  }
-  @transformConfig
-  replace(config) {
-    uni.redirectTo(config)
-  }
-  back(delta = 1) {
-    uni.navigateBack({
-      delta
-    })
-  }
-  @transformConfig
-  switchTab(config) {
-    uni.switchTab(config)
-  }
-  @transformConfig
-  reLaunch(config) {
-    uni.reLaunch(config)
-  }
-}
+    if (isPlainObject(options)) {
+      Object.assign(_options, options)
+    }
 
-function processPath(path) {
-  if (typeof path === 'string') {
-    path = path[0] === '/' ? path.slice(1) : path
-    path = path.indexOf('/') < 0 ? `/pages/${path}/index` : path
-    path = path[0] === '/' ? path : '/' + path
-    path = path.startsWith('/pages') ? path : '/pages' + path
-    if (!store.getters.loginStatus) {
+    _options.whiteListRoute = _options.whiteListRoute.map(this.wrapPath)[
+      (_options.loginPagePath, _options.homePagePath)
+    ] = [_options.loginPagePath, __options.homePagePath].map(this.wrapPath)
+    ;({
+      devMode: this.devMode,
+      getLoginStatus: this.getLoginStatus,
+      alias: this.alias,
+      whiteListRoute: this.whiteListRoute,
+      loginPagePath: this.loginPagePath,
+      homePagePath: this.homePagePath
+    } = _options)
+
+    this.current = null
+  }
+  callNavigate(fn, config) {
+    config = this.transformConfig(config)
+
+    fn(config)
+  }
+  wrapPath(path) {
+    if (typeof path === 'string') {
+      path = path[0] === '/' ? path.slice(1) : path
+      path = path.indexOf('/') < 0 ? `/pages/${path}/index` : path
+      path = path[0] === '/' ? path : '/' + path
+      path = path.startsWith('/pages') ? path : '/pages' + path
+      return path
+    }
+    if (this.devMode) {
+      console.error('页面路径类型错误', path)
+    }
+    return ''
+  }
+  processPath(path) {
+    path = this.wrapPath(path)
+    if (!this.getLoginStatus()) {
       let routeConfirm = false
       for (let i = 0, len = whiteListRoute.length; i < len; i++) {
         if (path.startsWith(whiteListRoute[i])) {
@@ -57,48 +68,55 @@ function processPath(path) {
         }
       }
       if (!routeConfirm) {
-        path = '/pages/login/index'
+        path = this.login
       }
     } else {
-      if (path === '/pages/login/index') {
-        path = '/pages/index/index'
+      if (path === this.loginPagePath) {
+        path = this.homePagePath
       }
     }
     return path
   }
-  if (ENV_NAME === 'development') {
-    console.error('页面路径类型错误', path)
-  }
-  return ''
-}
-
-// 合并配置
-function transformConfig(target, name, descriptor) {
-  var oldValue = descriptor.value
-  descriptor.value = function(...args) {
+  transformConfig(config) {
     let _config = {}
-    const config = args[0]
+    let path, query
     if (typeof config === 'string') {
-      _config = { url: processPath(config) }
+      path = config
+      // _config = { url: this.processPath(this.getAliasPath(config)) }
+    } else if (isPlainObject(config)) {
+      path = config.path
+      query = config.query || config.params
     }
-    if (isPlainObject(config)) {
-      _config = Object.assign(config, {
-        url: Url.transformPath(processPath(config.url || config.path), config.params)
-      })
-    }
-    if (!_config.url) {
-      return false
-    }
-    if (ENV_NAME === 'development') {
+    _config = Object.assign(config, {
+      url: Url.transformPath(this.processPath(this.getAliasPath(path)), query)
+    })
+    if (this.devMode) {
       const failCb = _config.fail
       _config.fail = function fail(err) {
         console.error(err)
         failCb && failCb(err)
       }
     }
-    return oldValue.apply(this, [_config])
+    return _config
   }
-  return descriptor
+  getAliasPath(name) {
+    return this.alias[name] || name
+  }
+  push(config) {
+    this.callNavigate(uni.navigateTo, config)
+  }
+  replace(config) {
+    this.callNavigate(uni.redirectTo, config)
+  }
+  back(delta = 1) {
+    this.callNavigate(uni.navigateBack, {
+      delta
+    })
+  }
+  switchTab(config) {
+    this.callNavigate(uni.switchTab, config)
+  }
+  reLaunch(config) {
+    this.callNavigate(uni.reLaunch, config)
+  }
 }
-
-export default new Router()

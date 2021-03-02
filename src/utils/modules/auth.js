@@ -1,5 +1,6 @@
-import { Storage } from '@/utils'
-import { TOKEN_KEY } from '@/utils/storageKeys'
+import { Storage } from './storage'
+
+const TOKEN_KEY = 'token'
 
 const Auth = {
   getToken: () => Storage.get(TOKEN_KEY),

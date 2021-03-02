@@ -1,17 +1,6 @@
 import Vue from 'vue'
 import moment = require('moment')
 
-declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    /**
-     * 该页面是否需要权限
-     * 如果为true，则在未登录情况下访问会跳转到登录页
-     *
-     */
-    needAuth: boolean
-  }
-}
-
 declare module 'vue/types/vue' {
   interface Vue {
     $moment: typeof moment
@@ -27,25 +16,11 @@ declare module 'vue/types/vue' {
       switchTab(config: RouterConfig): void
       reLaunch(config: RouterConfig): void
     }
-    $uuid: () => string
     $withLoading: (
       fn: () => Promise<any>,
       loadingMessage: string
     ) => Promise<any>
-    /**设备Id */
-    $deviceId: string
-    /**当前环境名称 */
-    $envName: 'development' | 'production' | 'testing' | 'uat'
-    /**环境变量 */
-    $env: {
-      VERSION: string
-      PLATFORM_NAME: string
-      PREVIEW: boolean
-      API_BASE_URL: string
-    }
-    $css: {
-      colorTheme: string
-    }
+    $tryWithErrorHandler: (fn: () => void, errorHandler?: () => void) => void
     /**获取页面实例 */
     $getPageInstance: (delta: number) => any
   }

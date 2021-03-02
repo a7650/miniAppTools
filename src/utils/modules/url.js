@@ -1,4 +1,4 @@
-import { isPlainObject } from 'lodash'
+import { isPlainObject } from '../index'
 
 const Url = {
   /**

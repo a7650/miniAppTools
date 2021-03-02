@@ -1,5 +1,5 @@
 {
-  "name": "miniapp-tools",
+  "name": "mini-app-tools",
   "version": "1.0.0",
   "description": "微信小程序工具，适用于uniapp创建的项目",
   "main": "src/index.js",

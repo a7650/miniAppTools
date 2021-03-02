@@ -8,12 +8,12 @@
 import {
   deepMerge,
   extend
-} from '@/utils/request/utils.js'
-import Request from '@/utils/request/core/request.js'
-import defaults from '@/utils/request/defaults.js'
-import CancelToken from '@/utils/request/core/cancelToken.js'
-import Mock from '@/utils/request/core/Mock.js'
-import graphQL from '@/utils/request/core/graphQL.js'
+} from './utils.js'
+import Request from './core/request.js'
+import defaults from './defaults.js'
+import CancelToken from './core/cancelToken.js'
+import Mock from './core/Mock.js'
+import graphQL from './core/graphQL.js'
 
 function createInstance(config) {
   const context = new Request(config)

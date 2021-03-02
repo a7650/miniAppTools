@@ -1,6 +1,3 @@
-
-export const DEVICE_ID = ''
-
 class StatusConstructor {
   constructor(list) {
     this.list = list

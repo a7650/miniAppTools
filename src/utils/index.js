@@ -7,3 +7,6 @@ export { default as Url } from './modules/url'
 export { default as Verify } from './modules/verify'
 export { default as Auth } from './modules/auth'
 
+export function isPlainObject(val) {
+  return _toString.call(val) === typeClass['object']
+}

@@ -1,12 +1,7 @@
-import Router from '@/router'
-import moment from '@/utils/momentConfig'
-// import { Toast } from '..'
-import { Storage, Toast } from '@/utils'
-import { DEVICE_ID } from '@/utils/dataconfig'
-import ENV, { ENV_NAME } from '@/env'
-import { v4 as uuidv4 } from 'uuid'
+import moment from '../utils/momentConfig'
+import { Storage, Toast } from '../utils'
 
-export default function(Vue) {
+export default function (Vue) {
   Vue.prototype.$moment = moment
 
   Vue.prototype.$setStorage = Storage.set
@@ -19,19 +14,7 @@ export default function(Vue) {
 
   Vue.prototype.$hideLoading = Toast.hideLoading
 
-  Vue.prototype._router = Router
-
-  Vue.prototype.$deviceId = DEVICE_ID
-
-  Vue.prototype.$envName = ENV_NAME
-
-  Vue.prototype.$env = ENV
-
-  Vue.prototype.$css = { colorTheme: '#007bfd' }
-
-  Vue.prototype.$uuid = uuidv4
-
-  Vue.prototype.$getPageInstance = function(delta = -1) {
+  Vue.prototype.$getPageInstance = function (delta = -1) {
     if (delta > -1) {
       return
     }
@@ -40,7 +23,7 @@ export default function(Vue) {
     return pages[index] && pages[index].$vm
   }
 
-  Vue.prototype.$withLoading = function(fn, loadingMessage = '正在加载') {
+  Vue.prototype.$withLoading = function (fn, loadingMessage = '正在加载') {
     if (typeof fn === 'function') {
       try {
         Toast.showLoading(loadingMessage)
@@ -58,7 +41,7 @@ export default function(Vue) {
     }
   }
 
-  Vue.prototype.$tryWithErrorHandler = function(fn, errorHandler) {
+  Vue.prototype.$tryWithErrorHandler = function (fn, errorHandler) {
     try {
       fn()
     } catch (e) {
