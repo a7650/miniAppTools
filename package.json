@@ -1,0 +1,18 @@
+{
+  "name": "miniapp-tools",
+  "version": "1.0.0",
+  "description": "微信小程序工具，适用于uniapp创建的项目",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zhangzp",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/moment": "^2.13.0",
+    "@types/uni-app": "^1.4.3"
+  },
+  "dependencies": {
+    "moment": "^2.29.1"
+  }
+}
