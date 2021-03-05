@@ -14,5 +14,6 @@
   },
   "dependencies": {
     "moment": "^2.29.1"
-  }
+  },
+  "repository": "https://github.com/a7650/miniAppTools.git"
 }
